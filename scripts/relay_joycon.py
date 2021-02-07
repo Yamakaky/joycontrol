@@ -178,9 +178,12 @@ if __name__ == '__main__':
     # setup logging
     log.configure()
 
-    with utils.get_output(args.log, default=None) as capture_file:
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(
-            _main(capture_file=capture_file, reconnect_bt_addr=args.reconnect_bt_addr)
-        )
-
+    while True:
+        with utils.get_output(args.log, default=None) as capture_file:
+            loop = asyncio.get_event_loop()
+            try:
+                loop.run_until_complete(
+                    _main(capture_file=capture_file, reconnect_bt_addr=args.reconnect_bt_addr)
+                )
+            except hid.HIDException:
+                continue
