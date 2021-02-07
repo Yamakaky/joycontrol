@@ -5,6 +5,7 @@ import os
 import socket
 import struct
 import time
+from datetime import datetime
 
 import hid
 
@@ -19,6 +20,8 @@ VENDOR_ID = 1406
 PRODUCT_ID_JL = 8198
 PRODUCT_ID_JR = 8199
 PRODUCT_ID_PC = 8201
+
+START = datetime.now()
 
 
 class Relay:
@@ -35,9 +38,10 @@ class Relay:
 
             if self._capture_file is not None:
                 # write data to log file
-                current_time = struct.pack('d', time.time())
-                size = struct.pack('i', len(data))
-                self._capture_file.write(current_time + size + data)
+                #current_time = struct.pack('d', time.time())
+                #size = struct.pack('i', len(data))
+                self._capture_file.write(bytes("> {} {}\n".format(datetime.now() - START, data.hex()), "ascii"))
+                self._capture_file.flush()
 
             await loop.sock_sendall(client_itr, data)
             await asyncio.sleep(0)
@@ -50,9 +54,10 @@ class Relay:
 
             if self._capture_file is not None:
                 # write data to log file
-                current_time = struct.pack('d', time.time())
-                size = struct.pack('i', len(data))
-                self._capture_file.write(current_time + size + data)
+                #current_time = struct.pack('d', time.time())
+                #size = struct.pack('i', len(data))
+                #self._capture_file.write(current_time + size + data)
+                self._capture_file.write(bytes("< {} {}\n".format(datetime.now() - START, data.hex()), "ascii"))
 
             # remove padding byte for output report (not required when using the hid driver)
             data = data[1:]
