@@ -32,7 +32,7 @@ class Relay:
         loop = asyncio.get_event_loop()
 
         while True:
-            data = await hid_device.read(100)
+            data = await hid_device.read(500)
             # add adding byte for input report
             data = b'\xa1' + data
 
@@ -50,7 +50,7 @@ class Relay:
         loop = asyncio.get_event_loop()
 
         while True:
-            data = await loop.sock_recv(client_itr, 50)
+            data = await loop.sock_recv(client_itr, 100)
 
             if self._capture_file is not None:
                 # write data to log file
